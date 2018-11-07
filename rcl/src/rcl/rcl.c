@@ -32,8 +32,35 @@ static atomic_bool __rcl_is_initialized = ATOMIC_VAR_INIT(false);
 static rcl_allocator_t __rcl_allocator;
 static int __rcl_argc = 0;
 static char ** __rcl_argv = NULL;
-static atomic_uint_least64_t __rcl_instance_id = ATOMIC_VAR_INIT(0);
-static uint64_t __rcl_next_unique_id = 0;
+static atomic_uint_least32_t __rcl_instance_id = ATOMIC_VAR_INIT(0);
+static uint32_t __rcl_next_unique_id = 0;
+
+uint_least64_t __atomic_load_8(volatile uint_least64_t* ptr, int memorder) 
+{ 
+    // uint_least64_t ret;
+    // get_lock(ptr, memorder);
+    // ret = *ptr; 
+    // free_lock(ptr, memorder);
+    // return ret;
+    return *ptr;
+}
+
+void __atomic_store_8(volatile uint_least64_t* ptr, uint_least64_t val, int memorder) 
+{
+    // get_lock(ptr, memorder);
+    *ptr = val;
+    // free_lock(ptr, memorder);
+
+}
+
+uint_least64_t __atomic_exchange_8(volatile uint_least64_t* ptr, uint_least64_t val, int memorder) 
+{ 
+    // get_lock(ptr, memorder);
+    uint_least64_t ret = *ptr;
+    *ptr = val;
+    // free_lock(ptr, memorder);
+    return ret; 
+}
 
 static void
 __clean_up_init()
@@ -124,7 +151,9 @@ rcl_init(int argc, char const * const * argv, rcl_allocator_t allocator)
   }
 
   rcl_atomic_store(&__rcl_instance_id, ++__rcl_next_unique_id);
-  if (rcl_atomic_load_uint64_t(&__rcl_instance_id) == 0) {
+  uint32_t result;
+  rcl_atomic_load(&__rcl_instance_id, result);
+  if (result == 0) {
     // Roll over occurred.
     __rcl_next_unique_id--;  // roll back to avoid the next call succeeding.
     RCL_SET_ERROR_MSG("unique rcl instance ids exhausted", allocator);
@@ -152,7 +181,9 @@ rcl_shutdown()
 uint64_t
 rcl_get_instance_id()
 {
-  return rcl_atomic_load_uint64_t(&__rcl_instance_id);
+  uint32_t result;
+  rcl_atomic_load(&__rcl_instance_id, result);
+  return result;
 }
 
 bool
