@@ -75,7 +75,7 @@ set(${PROJECT_NAME}_sources
   src/rcl/wait.c
 )
 
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_sources})
+add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_sources})
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
@@ -110,7 +110,7 @@ target_compile_definitions(${PROJECT_NAME}
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
-target_compile_definitions(${PROJECT_NAME} PRIVATE "RCL_BUILDING_DLL")
+#target_compile_definitions(${PROJECT_NAME} PRIVATE "RCL_BUILDING_DLL")
 rcl_set_symbol_visibility_hidden(${PROJECT_NAME} LANGUAGE "C")
 
 if(BUILD_TESTING AND NOT RCUTILS_DISABLE_FAULT_INJECTION)
