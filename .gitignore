@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# Editors
+.idea
+.vscode
+cmake-build*
+build
