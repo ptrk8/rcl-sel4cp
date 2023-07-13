@@ -7,11 +7,11 @@ option(RCL_LOGGING_ENABLED "Enable/disable logging" OFF)
 
 find_package(ament_cmake_ros REQUIRED)
 
-find_package(rcl_interfaces REQUIRED)
-find_package(rcl_logging_interface REQUIRED)
+#find_package(rcl_interfaces REQUIRED)
+#find_package(rcl_logging_interface REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
-find_package(rmw_implementation REQUIRED)
+#find_package(rmw_implementation REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(tracetools REQUIRED)
 

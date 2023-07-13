@@ -6,7 +6,8 @@ BUILD_DIR = build
 # Pushes the current directory to remote host.
 # ==================================
 
-REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
+NUM_PROCS = 4
+REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu1804"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
 .PHONY: push-remote
@@ -55,5 +56,9 @@ build:
 		cmake -S . -B $(BUILD_DIR) \
 		-DBUILD_TESTING=0 \
 		-DCMAKE_C_COMPILER_WORKS=1 \
-		-DCMAKE_CXX_COMPILER_WORKS=1
-	cd $(BUILD_DIR) && $(MAKE)
+		-DCMAKE_CXX_COMPILER_WORKS=1 \
+		-DCMAKE_MODULE_PATH=./
+	cd $(BUILD_DIR) && $(MAKE) -j $(NUM_PROCS)
+	# Install so that we can use the library in other projects.
+	cd $(BUILD_DIR) && sudo $(MAKE) install
+
