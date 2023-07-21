@@ -1,6 +1,7 @@
 SHELL = /bin/zsh
 PWD_DIR = "$(shell basename $$(pwd))"
 BUILD_DIR = build
+INSTALL_DIR = ~/ros2
 
 # ==================================
 # Pushes the current directory to remote host.
@@ -45,6 +46,9 @@ remote: push-remote
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -rf $(INSTALL_DIR)/include/rcl
+	rm -rf $(INSTALL_DIR)/lib/librcl.a
+	rm -rf $(INSTALL_DIR)/share/rcl
 
 # ==================================
 # Build
@@ -57,8 +61,9 @@ build:
 		-DBUILD_TESTING=0 \
 		-DCMAKE_C_COMPILER_WORKS=1 \
 		-DCMAKE_CXX_COMPILER_WORKS=1 \
+		-DCMAKE_INSTALL_PREFIX=$(INSTALL_DIR) \
 		-DCMAKE_MODULE_PATH=./
 	cd $(BUILD_DIR) && $(MAKE) -j $(NUM_PROCS)
 	# Install so that we can use the library in other projects.
-	cd $(BUILD_DIR) && sudo $(MAKE) install
+	cd $(BUILD_DIR) && $(MAKE) install
 
